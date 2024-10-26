@@ -1,0 +1,23 @@
+version: '3'
+services:
+  backend:
+    build: ./kickof-express
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./kickof-express/.env
+    volumes:
+      - ./kickof-express:/app
+      - /app/node_modules
+
+  frontend:
+    build: ./kickof-next
+    ports:
+      - "3001:3000"
+    env_file:
+      - ./kickof-next/.env
+    volumes:
+      - ./kickof-next:/app
+      - /app/node_modules
+    depends_on:
+      - backend
