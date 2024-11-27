@@ -16,12 +16,6 @@ const Menus = [
     },
     {
         id: generateUniqueId(),
-        title: 'All Tasks',
-        icon: ChecklistRounded,
-        href: '/task',
-    },
-    {
-        id: generateUniqueId(),
         title: 'Projects',
         icon: FolderCopyRounded,
         href: '/project',
@@ -46,6 +40,39 @@ const Menus = [
                 id: generateUniqueId(),
                 title: 'Permission',
                 href: '/user',
+            }
+        ]
+    },
+];
+
+export const ProjectMenus = [
+    {
+        id: generateUniqueId(),
+        title: 'Dashboard',
+        icon: DashboardRounded,
+        href: '/dashboard',
+    },
+    {
+        id: generateUniqueId(),
+        title: 'All Tasks',
+        icon: ChecklistRounded,
+        href: '/',
+    },
+    {
+        id: generateUniqueId(),
+        title: 'Members',
+        icon: PeopleAltRounded,
+        href: '/member',
+    },
+    {
+        id: generateUniqueId(),
+        title: 'Setting',
+        icon: SettingsRounded,
+        children: [
+            {
+                id: generateUniqueId(),
+                title: 'Task Labels',
+                href: '/setting/tasklabel',
             }
         ]
     },

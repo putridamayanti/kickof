@@ -3,23 +3,21 @@
 import React, {useEffect, useRef, useState} from "react";
 import {
     Avatar,
-    Button,
-    Paper,
+    Button, Card,
     Stack,
     styled,
-    Typography
+    Typography, useTheme
 } from "@mui/material";
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import Box from "@mui/material/Box";
 import {AvatarGroup} from "@mui/lab";
 import ColumnForm from "components/pages/task/ColumnForm";
-import ColumnService from "services/ColumnService";
+import StateService from "services/StateService";
 import {useSelector} from "store";
 import TaskForm from "components/pages/task/TaskForm";
 import TaskService from "services/TaskService";
 import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import {EditRounded} from "@mui/icons-material";
+import CustomChip from "components/chip/CustomChip";
 
 const KanbanWrapper = styled(Box)(({ theme }) => ({
     paddingBottom: '0.95rem',
@@ -34,13 +32,13 @@ const ColumnWrapper = styled(Box)(({ theme }) => ({
 
 const ColumnCard = styled(Box)(({ theme }) => ({
     maxHeight: 'calc(100vh - 220px)',
-    paddingRight: '0.975rem',
     overflowY: 'auto'
     // minHeight: 500
 }));
 
 export default function KanbanView(props) {
-    const { columnData, taskLabels, members, refresh } = props;
+    const { states, taskLabels, members, refresh } = props;
+    const theme = useTheme();
     const { workspace, project } = useSelector(state => state.app);
     const [columns, setColumns] = useState([]);
     const [newForm, setNewForm] = useState(false);
@@ -48,11 +46,11 @@ export default function KanbanView(props) {
 
     const mounted = useRef(false);
     useEffect(() => {
-        if (!mounted.current && columns.length === 0 && columnData?.length > 0) {
-            setColumns(columnData);
+        if (!mounted.current && columns.length === 0 && states?.length > 0) {
+            setColumns(states);
             mounted.current = true;
         }
-    }, [columnData, columns.length]);
+    }, [states, columns.length]);
 
     const onDragEnd = async (result) => {
         const { source, destination, draggableId } = result;
@@ -65,7 +63,7 @@ export default function KanbanView(props) {
             const sourceColumn = columns.find(e => e.id === source.droppableId);
             const sourceColumnIndex = columns.findIndex(e => e.id === source.droppableId);
             const sourceTask = sourceColumn.tasks[source.index];
-            sourceTask.columnId = destination.droppableId;
+            sourceTask.stateId = destination.droppableId;
             destColumn.tasks?.splice(destination.index, 0, sourceTask);
             columns[destColumnIndex] = destColumn;
             sourceColumn.tasks = sourceColumn.tasks?.filter(e => e.id !== sourceTask.id);
@@ -82,12 +80,20 @@ export default function KanbanView(props) {
         values.projectId = project?.id;
         values.workspaceId = workspace?.id;
 
-        return ColumnService.createColumn(values)
+        return StateService.createState(values)
             .then((res) => {
                 setColumns([...columns, res?.data?.data])
                 refresh();
                 setNewForm(false);
             });
+    };
+
+    const submit = (values) => {
+        if (values?.id) {
+            return TaskService.updateTask(values?.id, values);
+        }
+
+        return TaskService.createTask(values);
     };
 
     const handleSubmitTask = (values) => {
@@ -99,9 +105,16 @@ export default function KanbanView(props) {
                 return {label: e.inputValue}
             }
         })
+        values.assignees = values.assignees.map(e => {
+            if (e.id) return e
+            else { return {label: e.inputValue} }
+        })
 
-        return TaskService.createTask(values)
-            .then(() => setNewForm(false));
+        return submit(values).then((res) => {
+            console.log(res)
+            setNewForm(false);
+            refresh();
+        });
     };
 
     return (
@@ -115,7 +128,7 @@ export default function KanbanView(props) {
                         Add Task
                     </Button>
                     <Button variant="outlined" onClick={() => setNewForm(true)}>
-                        Add Column
+                        Add State
                     </Button>
                 </Stack>
             </Stack>
@@ -134,33 +147,47 @@ export default function KanbanView(props) {
                                             {column?.tasks?.map((task, index) => (
                                                 <Draggable key={task.id} draggableId={task.id} index={index}>
                                                     {(provided) => (
-                                                        <Paper
+                                                        <Card
                                                             ref={provided.innerRef}
                                                             {...provided.draggableProps}
                                                             {...provided.dragHandleProps}
                                                             elevation={0}
-                                                            sx={{ p: 2, mb: 2 }}
+                                                            sx={{ p: 2, mb: 2, border: `1px solid ${theme.palette.grey.A200}` }}
                                                             onClick={() => setTaskForm({open: true, data: task})}
                                                         >
                                                             <Typography>{task.title}</Typography>
-                                                            {/*<AvatarGroup*/}
-                                                            {/*    max={4}*/}
-                                                            {/*    sx={{*/}
-                                                            {/*        '& :first-child.MuiAvatar-root': {*/}
-                                                            {/*            width: 20,*/}
-                                                            {/*            height: 20,*/}
-                                                            {/*            fontSize: 11,*/}
-                                                            {/*            backgroundColor: 'secondary.main',*/}
-                                                            {/*            color: 'secondary.contrastText'*/}
-                                                            {/*        }*/}
-                                                            {/*    }}>*/}
-                                                            {/*    <AssigneeAvatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"/>*/}
-                                                            {/*    <AssigneeAvatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />*/}
-                                                            {/*    <AssigneeAvatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />*/}
-                                                            {/*    <AssigneeAvatar alt="Agnes Walker" src="/static/images/avatar/4.jpg" />*/}
-                                                            {/*    <AssigneeAvatar alt="Trevor Henderson" src="/static/images/avatar/5.jpg" />*/}
-                                                            {/*</AvatarGroup>*/}
-                                                        </Paper>
+                                                            <Stack direction="row" spacing={1} alignItems="center" sx={{ marginTop: 2 }}>
+                                                                <AvatarGroup
+                                                                    max={4}
+                                                                    sx={{
+                                                                        '& :first-child.MuiAvatar-root': {
+                                                                            width: 20,
+                                                                            height: 20,
+                                                                            fontSize: 11,
+                                                                            backgroundColor: 'secondary.main',
+                                                                            color: 'secondary.contrastText'
+                                                                        }
+                                                                    }}>
+                                                                    {task.assignees?.map((e, i) => (
+                                                                        <Avatar key={i} alt={e.name}/>
+                                                                    ))}
+                                                                </AvatarGroup>
+                                                                {task.labels?.map((e, i) => (
+                                                                    <CustomChip
+                                                                        key={i}
+                                                                        color={e.color !== '' ? e.color : theme.palette.primary.main}
+                                                                        label={e.label}
+                                                                        size="small"
+                                                                        sx={{
+                                                                            height: 18,
+                                                                            '.MuiChip-label': {
+                                                                                fontSize: 10,
+                                                                                fontWeight: 500
+                                                                            }
+                                                                        }}/>
+                                                                ))}
+                                                            </Stack>
+                                                        </Card>
                                                     )}
                                                 </Draggable>
                                             ))}
@@ -181,10 +208,11 @@ export default function KanbanView(props) {
 
             <TaskForm
                 data={taskForm.data}
-                columns={columnData}
+                states={states}
                 taskLabels={taskLabels}
                 members={members}
                 open={taskForm.open}
+                onRefresh={refresh}
                 onClose={() => setTaskForm({open: false, data: null})}
                 onSubmit={handleSubmitTask}/>
         </>

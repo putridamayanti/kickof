@@ -7,25 +7,24 @@ import Image from "next/image";
 import {useParams, useRouter} from "next/navigation";
 import React from "react";
 import useSWR from "swr";
-import WorkspaceService from "services/WorkspaceService";
 import ProjectService from "services/ProjectService";
-
-const projects = [
-    {
-        name: 'Project 1',
-        code: 'project1',
-        description: 'Develop e-commerce'
-    }
-];
+import {useDispatch, useSelector} from "store";
+import {AppActions} from "store/slices/AppSlice";
 
 export default function Project() {
     const router = useRouter();
     const params = useParams();
+    const dispatch = useDispatch();
+    const { workspace } = useSelector(state => state.app);
 
     const { data: resData, isLoading: loading } = useSWR(
-        params?.workspace ? '/api/project' : null,
-        () => ProjectService.getProjectsByQuery({workspace: params?.workspace}));
-    console.log(resData);
+        (params?.workspace && workspace?.id) ? '/api/project' : null,
+        () => ProjectService.getProjectsByQuery({workspace: workspace?.id}), {
+            onSuccess: (res) => {
+                dispatch(AppActions.setProjects(res?.data?.data));
+            }
+        });
+
     return (
         <Box>
             <Stack direction="row" justifyContent="space-between" alignItems="center" marginBottom={2}>

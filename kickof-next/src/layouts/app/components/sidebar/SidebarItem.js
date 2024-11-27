@@ -3,6 +3,7 @@ import {HexToRGBA} from "utils/theme";
 import Link from "next/link";
 import {useParams, usePathname, useRouter} from "next/navigation";
 import {CircleRounded} from "@mui/icons-material";
+import {useSelector} from "store";
 
 const MenuNavLink = styled(ListItemButton)(({ theme }) => ({
     width: '100%',
@@ -37,8 +38,12 @@ export default function SidebarItem(props) {
     const router = useRouter();
     const pathname = usePathname();
     const params = useParams();
+    const {project} = useSelector(state => state.app);
 
     const Icon = item?.icon;
+    const href = item.href === undefined ? '/' : project?.id
+        ? `/app/${params.workspace}/project/${project?.code}/${item.href}`
+        : `/app/${params.workspace}${item.href}`
     const isNavLinkActive = () => {
         return pathname === `/app/${params.workspace}${item.href}`;
     }
@@ -50,7 +55,7 @@ export default function SidebarItem(props) {
                 component={Link}
                 {...(item.disabled && { tabIndex: -1 })}
                 className={isNavLinkActive() ? 'active' : ''}
-                href={item.href === undefined ? '/' : `/app/${params.workspace}${item.href}`}
+                href={href}
                 {...(item.openInNewTab ? { target: '_blank' } : null)}
                 onClick={e => {
                     if (item.href === undefined) {

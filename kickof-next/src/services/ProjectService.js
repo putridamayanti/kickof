@@ -9,8 +9,13 @@ const createProject = (params) => {
     return Api.Instance.post('/project', params);
 };
 
+const getProjectById = (id) => {
+    return Api.Instance.get(`/project/${id}`)
+        .then(res => res.data);
+};
+
 const getProjectByCode = (code) => {
-    return Api.Instance.get(`/project/code/${code}`)
+    return Api.Instance.get(`/project/${code}`)
         .then(res => res.data);
 };
 

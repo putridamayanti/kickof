@@ -9,6 +9,8 @@ import WorkspaceService from "services/WorkspaceService";
 import {AppActions} from "store/slices/AppSlice";
 import {useParams, useRouter} from "next/navigation";
 import ProjectService from "services/ProjectService";
+import AuthService from "services/AuthService";
+import {ProfileActions} from "store/slices/ProfileSlice";
 
 const LayoutWrapper = styled(Box)(({ theme }) => ({
     // height: '100%',
@@ -45,9 +47,13 @@ export default function AppLayout(props) {
     const toggleNavVisibility = () => dispatch(ThemeActions.setSidebarCollapse(!isSidebarCollapsed));
     const contentHeightFixed = true;
 
+    const { data: resProfile } = useSWR('/api/profile', () => AuthService.getProfile());
+
     const { data: resData, isLoading: loading } = useSWR(
-        workspaces?.length === 0 ? '/api/workspace' : null,
-        () => WorkspaceService.getWorkspacesByQuery({}));
+        (workspaces?.length === 0 && resProfile?.data) ? '/api/workspace' : null,
+        () => WorkspaceService.getWorkspacesByQuery({
+            user: resProfile?.data?.id
+        }));
 
     const { data: resProject } = useSWR(
         (!project?.id && params.code) ? '/api/project' : null,
@@ -62,7 +68,11 @@ export default function AppLayout(props) {
         if (resProject?.data?.id) {
             dispatch(AppActions.setProject(resProject?.data));
         }
-    }, [dispatch, resData?.data, resProject?.data]);
+
+        if (resProfile?.data?.id) {
+            dispatch(ProfileActions.setProfile(resProfile?.data));
+        }
+    }, [dispatch, resData?.data, resProject?.data, resProfile?.data]);
 
     useEffect(() => {
         if (workspace?.code && params.workspace !== workspace.code) {

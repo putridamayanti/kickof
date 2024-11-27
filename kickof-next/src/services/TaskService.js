@@ -1,8 +1,7 @@
 import Api from "utils/api";
 
 const getTasksByQuery = (query) => {
-    return Api.Instance.get('/task', {params: query})
-        .then(res => res.data?.data);
+    return Api.Instance.get('/task', {params: query}).then(res => res.data);
 };
 
 const createTask = (params) => {
@@ -20,10 +19,15 @@ const updateColumnTask = async (taskId, columnId) => {
     }
 };
 
+const deleteTask = (id) => {
+    return Api.Instance.delete(`/task/${id}`);
+}
+
 const TaskService = {
     getTasksByQuery,
     createTask,
-    updateTask
+    updateTask,
+    deleteTask
 };
 
 export default TaskService;

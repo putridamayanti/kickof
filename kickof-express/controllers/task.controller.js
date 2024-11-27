@@ -1,22 +1,30 @@
 const {GenerateQuery} = require("../utils/helper");
 const {TaskService} = require("../services/task.service");
 const {v4: uuid} = require("uuid");
-const {GeneratePassword} = require("../utils/jwt");
 const {ProjectService} = require("../services/project.service");
 const {TaskLabelService} = require("../services/tasklabel.service");
 const {ColumnService} = require("../services/column.service");
+const {WorkspaceService} = require("../services/workspace.service");
 
 const GetTasksByQuery = async (req, res) => {
+    const userId = req.user?.id;
     const { limit, page, skip, sort } = GenerateQuery(req.query);
     const query = {};
 
     if (req.query?.keyword) query.title = { '$regex': '.*' + req.query?.keyword + '.*', '$options': '$i' };
     if (req.query?.project) {
         const project = await ProjectService.GetProject({code: req.query?.project});
-        req.query.projectId = project.id;
+        query.projectId = project.id;
+    }
+    if (req.query?.workspace) {
+        const workspace = await WorkspaceService.GetWorkspace({code: req.query?.workspace});
+        query.workspaceId = workspace.id;
+    }
+    if (req.query?.assigned) {
+        query.assignees = { '$in': userId }
     }
 
-    const result = await TaskService.GetTasks({limit, page, skip, sort, query});
+    const result = await TaskService.GetTasks({limit, page, skip, sort, query}, null, null, ['labels']);
 
     return res.status(200).send({data: result});
 };

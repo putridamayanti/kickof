@@ -4,7 +4,8 @@ const initialState = {
     country: {},
     workspace: {},
     workspaces: [],
-    project: {}
+    project: {},
+    projects: [],
 };
 
 export const AppSlice = createSlice({
@@ -24,6 +25,9 @@ export const AppSlice = createSlice({
         setProject: (state, action) => {
             state.project = action.payload;
         },
+        setProjects: (state, action) => {
+            state.projects = action.payload;
+        }
     }
 });
 

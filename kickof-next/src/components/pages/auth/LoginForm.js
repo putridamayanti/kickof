@@ -33,7 +33,6 @@ export default function LoginForm() {
     const handleSubmit = (values) => {
         return AuthService.login(values)
             .then(res => {
-                console.log(res)
                 if (res.status === 200) {
                     router.push('/app');
                 }
