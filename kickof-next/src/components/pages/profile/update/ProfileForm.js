@@ -1,7 +1,20 @@
-import {Box, Button, Card, CardContent, CardHeader, Divider, Grid2, styled, Typography} from "@mui/material";
+import {
+    Box,
+    Button,
+    Card,
+    CardContent,
+    CardHeader,
+    Divider, FormControl,
+    Grid2,
+    InputAdornment,
+    styled,
+    Typography
+} from "@mui/material";
 import {useState} from "react";
 import {useFormik} from "formik";
 import Image from "next/image";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 
 const initialData = {
     state: '',
@@ -17,13 +30,6 @@ const initialData = {
     organization: 'Pixinvent',
     email: 'john.doe@example.com'
 }
-
-// const ImgStyled = styled('img')(({ theme }) => ({
-//     width: 100,
-//     height: 100,
-//     marginRight: theme.spacing(6),
-//     borderRadius: theme.shape.borderRadius
-// }))
 
 const ButtonStyled = styled(Button)(({ theme }) => ({
     [theme.breakpoints.down('sm')]: {
@@ -106,7 +112,6 @@ export default function ProfileForm() {
                                         borderRadius: 10,
                                         background: '#FFFFFF'
                                     }}/>
-                                {/*<ImgStyled src={imgSrc} alt='Profile Pic' />*/}
                                 <div>
                                     <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
                                         Upload New Photo
@@ -130,7 +135,7 @@ export default function ProfileForm() {
                         <CardContent>
                             <Grid2 container spacing={5}>
                                 <Grid2 item xs={12} sm={6}>
-                                    <CustomTextField
+                                    <TextField
                                         fullWidth
                                         label='First Name'
                                         placeholder='John'
@@ -139,7 +144,7 @@ export default function ProfileForm() {
                                     />
                                 </Grid2>
                                 <Grid2 item xs={12} sm={6}>
-                                    <CustomTextField
+                                    <TextField
                                         fullWidth
                                         label='Last Name'
                                         placeholder='Doe'
@@ -148,7 +153,7 @@ export default function ProfileForm() {
                                     />
                                 </Grid2>
                                 <Grid2 item xs={12} sm={6}>
-                                    <CustomTextField
+                                    <TextField
                                         fullWidth
                                         type='email'
                                         label='Email'
@@ -158,7 +163,7 @@ export default function ProfileForm() {
                                     />
                                 </Grid2>
                                 <Grid2 item xs={12} sm={6}>
-                                    <CustomTextField
+                                    <TextField
                                         fullWidth
                                         label='Organization'
                                         placeholder='Pixinvent'
@@ -167,7 +172,7 @@ export default function ProfileForm() {
                                     />
                                 </Grid2>
                                 <Grid2 item xs={12} sm={6}>
-                                    <CustomTextField
+                                    <TextField
                                         fullWidth
                                         type='number'
                                         label='Phone Number'
@@ -178,7 +183,7 @@ export default function ProfileForm() {
                                     />
                                 </Grid2>
                                 <Grid2 item xs={12} sm={6}>
-                                    <CustomTextField
+                                    <TextField
                                         fullWidth
                                         label='Address'
                                         placeholder='Address'
@@ -187,7 +192,7 @@ export default function ProfileForm() {
                                     />
                                 </Grid2>
                                 <Grid2 item xs={12} sm={6}>
-                                    <CustomTextField
+                                    <TextField
                                         fullWidth
                                         label='State'
                                         placeholder='California'
@@ -196,7 +201,7 @@ export default function ProfileForm() {
                                     />
                                 </Grid2>
                                 <Grid2 item xs={12} sm={6}>
-                                    <CustomTextField
+                                    <TextField
                                         fullWidth
                                         type='number'
                                         label='Zip Code'
@@ -206,7 +211,7 @@ export default function ProfileForm() {
                                     />
                                 </Grid2>
                                 <Grid2 item xs={12} sm={6}>
-                                    <CustomTextField
+                                    <TextField
                                         select
                                         fullWidth
                                         defaultValue=''
@@ -221,10 +226,10 @@ export default function ProfileForm() {
                                         <MenuItem value='france'>France</MenuItem>
                                         <MenuItem value='united-kingdom'>United Kingdom</MenuItem>
                                         <MenuItem value='united-states'>United States</MenuItem>
-                                    </CustomTextField>
+                                    </TextField>
                                 </Grid2>
                                 <Grid2 item xs={12} sm={6}>
-                                    <CustomTextField
+                                    <TextField
                                         select
                                         fullWidth
                                         defaultValue=''
@@ -239,10 +244,10 @@ export default function ProfileForm() {
                                         <MenuItem value='french'>French</MenuItem>
                                         <MenuItem value='german'>German</MenuItem>
                                         <MenuItem value='portuguese'>Portuguese</MenuItem>
-                                    </CustomTextField>
+                                    </TextField>
                                 </Grid2>
                                 <Grid2 item xs={12} sm={6}>
-                                    <CustomTextField
+                                    <TextField
                                         select
                                         fullWidth
                                         defaultValue=''
@@ -269,10 +274,10 @@ export default function ProfileForm() {
                                         <MenuItem value='gmt-05-ind'>(GMT-05:00) Indiana (East)</MenuItem>
                                         <MenuItem value='gmt-04'>(GMT-04:00) Atlantic Time (Canada)</MenuItem>
                                         <MenuItem value='gmt-04-clp'>(GMT-04:00) Caracas, La Paz</MenuItem>
-                                    </CustomTextField>
+                                    </TextField>
                                 </Grid2>
                                 <Grid2 item xs={12} sm={6}>
-                                    <CustomTextField
+                                    <TextField
                                         select
                                         fullWidth
                                         defaultValue=''
@@ -286,7 +291,7 @@ export default function ProfileForm() {
                                         <MenuItem value='eur'>EUR</MenuItem>
                                         <MenuItem value='pound'>Pound</MenuItem>
                                         <MenuItem value='bitcoin'>Bitcoin</MenuItem>
-                                    </CustomTextField>
+                                    </TextField>
                                 </Grid2>
 
                                 <Grid2 item xs={12} sx={{ pt: theme => `${theme.spacing(6.5)} !important` }}>
@@ -304,128 +309,128 @@ export default function ProfileForm() {
             </Grid2>
 
             {/* Delete Account Card */}
-            <Grid2 item xs={12}>
-                <Card>
-                    <CardHeader title='Delete Account' />
-                    <CardContent>
-                        <form onSubmit={handleSubmit(onSubmit)}>
-                            <Box sx={{ mb: 4 }}>
-                                <FormControl>
-                                    <Controller
-                                        name='checkbox'
-                                        control={control}
-                                        rules={{ required: true }}
-                                        render={({ field }) => (
-                                            <FormControlLabel
-                                                label='I confirm my account deactivation'
-                                                sx={{ '& .MuiTypography-root': { color: errors.checkbox ? 'error.main' : 'text.secondary' } }}
-                                                control={
-                                                    <Checkbox
-                                                        {...field}
-                                                        size='small'
-                                                        name='validation-basic-checkbox'
-                                                        sx={errors.checkbox ? { color: 'error.main' } : null}
-                                                    />
-                                                }
-                                            />
-                                        )}
-                                    />
-                                    {errors.checkbox && (
-                                        <FormHelperText
-                                            id='validation-basic-checkbox'
-                                            sx={{ mx: 0, color: 'error.main', fontSize: theme => theme.typography.body2.fontSize }}
-                                        >
-                                            Please confirm you want to delete account
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
-                            </Box>
-                            <Button variant='contained' color='error' type='submit' disabled={errors.checkbox !== undefined}>
-                                Deactivate Account
-                            </Button>
-                        </form>
-                    </CardContent>
-                </Card>
-            </Grid2>
+        {/*    <Grid2 item xs={12}>*/}
+        {/*    <Card>*/}
+        {/*        <CardHeader title='Delete Account' />*/}
+        {/*        <CardContent>*/}
+        {/*            <form onSubmit={handleSubmit(onSubmit)}>*/}
+        {/*                <Box sx={{ mb: 4 }}>*/}
+        {/*                    <FormControl>*/}
+        {/*                        <Controller*/}
+        {/*                            name='checkbox'*/}
+        {/*                            control={control}*/}
+        {/*                            rules={{ required: true }}*/}
+        {/*                            render={({ field }) => (*/}
+        {/*                                <FormControlLabel*/}
+        {/*                                    label='I confirm my account deactivation'*/}
+        {/*                                    sx={{ '& .MuiTypography-root': { color: errors.checkbox ? 'error.main' : 'text.secondary' } }}*/}
+        {/*                                    control={*/}
+        {/*                                        <Checkbox*/}
+        {/*                                            {...field}*/}
+        {/*                                            size='small'*/}
+        {/*                                            name='validation-basic-checkbox'*/}
+        {/*                                            sx={errors.checkbox ? { color: 'error.main' } : null}*/}
+        {/*                                        />*/}
+        {/*                                    }*/}
+        {/*                                />*/}
+        {/*                            )}*/}
+        {/*                        />*/}
+        {/*                        {errors.checkbox && (*/}
+        {/*                            <FormHelperText*/}
+        {/*                                id='validation-basic-checkbox'*/}
+        {/*                                sx={{ mx: 0, color: 'error.main', fontSize: theme => theme.typography.body2.fontSize }}*/}
+        {/*                            >*/}
+        {/*                                Please confirm you want to delete account*/}
+        {/*                            </FormHelperText>*/}
+        {/*                        )}*/}
+        {/*                    </FormControl>*/}
+        {/*                </Box>*/}
+        {/*                <Button variant='contained' color='error' type='submit' disabled={errors.checkbox !== undefined}>*/}
+        {/*                    Deactivate Account*/}
+        {/*                </Button>*/}
+        {/*            </form>*/}
+        {/*        </CardContent>*/}
+        {/*    </Card>*/}
+        {/*</Grid2>*/}
 
-            {/* Deactivate Account Dialogs */}
-            <Dialog fullWidth maxWidth='xs' open={open} onClose={handleClose}>
-                <DialogContent
-                    sx={{
-                        pb: theme => `${theme.spacing(6)} !important`,
-                        px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],
-                        pt: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            textAlign: 'center',
-                            alignItems: 'center',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            '& svg': { mb: 6, color: 'warning.main' }
-                        }}
-                    >
-                        <Icon icon='tabler:alert-circle' fontSize='5.5rem' />
-                        <Typography>Are you sure you would like to cancel your subscription?</Typography>
-                    </Box>
-                </DialogContent>
-                <DialogActions
-                    sx={{
-                        justifyContent: 'center',
-                        px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],
-                        pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
-                    }}
-                >
-                    <Button variant='contained' sx={{ mr: 2 }} onClick={() => handleConfirmation('yes')}>
-                        Yes
-                    </Button>
-                    <Button variant='tonal' color='secondary' onClick={() => handleConfirmation('cancel')}>
-                        Cancel
-                    </Button>
-                </DialogActions>
-            </Dialog>
-            <Dialog fullWidth maxWidth='xs' open={secondDialogOpen} onClose={handleSecondDialogClose}>
-                <DialogContent
-                    sx={{
-                        pb: theme => `${theme.spacing(6)} !important`,
-                        px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],
-                        pt: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            flexDirection: 'column',
-                            '& svg': {
-                                mb: 8,
-                                color: userInput === 'yes' ? 'success.main' : 'error.main'
-                            }
-                        }}
-                    >
-                        <Icon fontSize='5.5rem' icon={userInput === 'yes' ? 'tabler:circle-check' : 'tabler:circle-x'} />
-                        <Typography variant='h4' sx={{ mb: 5 }}>
-                            {userInput === 'yes' ? 'Deleted!' : 'Cancelled'}
-                        </Typography>
-                        <Typography>
-                            {userInput === 'yes' ? 'Your subscription cancelled successfully.' : 'Unsubscription Cancelled!!'}
-                        </Typography>
-                    </Box>
-                </DialogContent>
-                <DialogActions
-                    sx={{
-                        justifyContent: 'center',
-                        px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],
-                        pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
-                    }}
-                >
-                    <Button variant='contained' color='success' onClick={handleSecondDialogClose}>
-                        OK
-                    </Button>
-                </DialogActions>
-            </Dialog>
+        {/*    /!* Deactivate Account Dialogs *!/*/}
+        {/*    <Dialog fullWidth maxWidth='xs' open={open} onClose={handleClose}>*/}
+        {/*        <DialogContent*/}
+        {/*            sx={{*/}
+        {/*                pb: theme => `${theme.spacing(6)} !important`,*/}
+        {/*                px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],*/}
+        {/*                pt: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]*/}
+        {/*            }}*/}
+        {/*        >*/}
+        {/*            <Box*/}
+        {/*                sx={{*/}
+        {/*                    display: 'flex',*/}
+        {/*                    textAlign: 'center',*/}
+        {/*                    alignItems: 'center',*/}
+        {/*                    flexDirection: 'column',*/}
+        {/*                    justifyContent: 'center',*/}
+        {/*                    '& svg': { mb: 6, color: 'warning.main' }*/}
+        {/*                }}*/}
+        {/*            >*/}
+        {/*                <Icon icon='tabler:alert-circle' fontSize='5.5rem' />*/}
+        {/*                <Typography>Are you sure you would like to cancel your subscription?</Typography>*/}
+        {/*            </Box>*/}
+        {/*        </DialogContent>*/}
+        {/*        <DialogActions*/}
+        {/*            sx={{*/}
+        {/*                justifyContent: 'center',*/}
+        {/*                px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],*/}
+        {/*                pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]*/}
+        {/*            }}*/}
+        {/*        >*/}
+        {/*            <Button variant='contained' sx={{ mr: 2 }} onClick={() => handleConfirmation('yes')}>*/}
+        {/*                Yes*/}
+        {/*            </Button>*/}
+        {/*            <Button variant='tonal' color='secondary' onClick={() => handleConfirmation('cancel')}>*/}
+        {/*                Cancel*/}
+        {/*            </Button>*/}
+        {/*        </DialogActions>*/}
+        {/*    </Dialog>*/}
+        {/*    <Dialog fullWidth maxWidth='xs' open={secondDialogOpen} onClose={handleSecondDialogClose}>*/}
+        {/*        <DialogContent*/}
+        {/*            sx={{*/}
+        {/*                pb: theme => `${theme.spacing(6)} !important`,*/}
+        {/*                px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],*/}
+        {/*                pt: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]*/}
+        {/*            }}*/}
+        {/*        >*/}
+        {/*            <Box*/}
+        {/*                sx={{*/}
+        {/*                    display: 'flex',*/}
+        {/*                    alignItems: 'center',*/}
+        {/*                    flexDirection: 'column',*/}
+        {/*                    '& svg': {*/}
+        {/*                        mb: 8,*/}
+        {/*                        color: userInput === 'yes' ? 'success.main' : 'error.main'*/}
+        {/*                    }*/}
+        {/*                }}*/}
+        {/*            >*/}
+        {/*                <Icon fontSize='5.5rem' icon={userInput === 'yes' ? 'tabler:circle-check' : 'tabler:circle-x'} />*/}
+        {/*                <Typography variant='h4' sx={{ mb: 5 }}>*/}
+        {/*                    {userInput === 'yes' ? 'Deleted!' : 'Cancelled'}*/}
+        {/*                </Typography>*/}
+        {/*                <Typography>*/}
+        {/*                    {userInput === 'yes' ? 'Your subscription cancelled successfully.' : 'Unsubscription Cancelled!!'}*/}
+        {/*                </Typography>*/}
+        {/*            </Box>*/}
+        {/*        </DialogContent>*/}
+        {/*        <DialogActions*/}
+        {/*            sx={{*/}
+        {/*                justifyContent: 'center',*/}
+        {/*                px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],*/}
+        {/*                pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]*/}
+        {/*            }}*/}
+        {/*        >*/}
+        {/*            <Button variant='contained' color='success' onClick={handleSecondDialogClose}>*/}
+        {/*                OK*/}
+        {/*            </Button>*/}
+        {/*        </DialogActions>*/}
+        {/*    </Dialog>*/}
         </Grid2>
     )
 }

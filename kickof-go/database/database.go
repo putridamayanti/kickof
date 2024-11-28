@@ -30,7 +30,7 @@ func Init() bool {
 		return false
 	}
 
-	log.Printf("Connected to MongoDB URI")
+	log.Printf("Connected to MongoDB URI", uri)
 
 	dbs, err := client.ListDatabaseNames(context.Background(), bson.D{})
 	if err != nil {

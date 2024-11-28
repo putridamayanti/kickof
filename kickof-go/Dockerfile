@@ -1,11 +1,13 @@
-FROM golang:1.22-alpine AS builder
+FROM golang:1.22-alpine
+
 WORKDIR /app
 COPY . .
-RUN go build -o main .
+RUN go mod tidy
 
-FROM alpine:latest
-WORKDIR /app
-COPY --from=builder /app/main .
-ENV PORT=8000
-EXPOSE 8000
-CMD ["./main"]
+COPY *.go ./
+
+RUN go build -o /kickof-go
+
+EXPOSE 8080
+
+CMD [ "/kickof-go" ]

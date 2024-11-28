@@ -2,12 +2,15 @@ package main
 
 import (
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"kickof/config"
 	"kickof/controllers"
 	"kickof/database"
+	"kickof/models"
 	"log"
+	"net/http"
 	"os"
 	"time"
 )
@@ -27,6 +30,8 @@ func main() {
 	router := gin.New()
 	router.Use(gin.Logger())
 
+	router.Use(static.Serve("/", static.LocalFile("./dist", true)))
+
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowAllOrigins = true
 	corsConfig.AllowMethods = []string{"POST", "GET", "PATCH", "OPTIONS", "DELETE"}
@@ -38,6 +43,13 @@ func main() {
 
 	api := router.Group("/api")
 	{
+		api.GET("/version", func(c *gin.Context) {
+			c.JSON(http.StatusOK, models.Response{
+				Data: "KickOf Api v1.0.0",
+			})
+			return
+		})
+
 		api.POST("/register", controllers.SignUp)
 		api.POST("/login", controllers.SignIn)
 		api.GET("/refresh-token", controllers.RefreshToken)

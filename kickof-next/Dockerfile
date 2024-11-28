@@ -14,11 +14,11 @@ COPY . .
 
 # Set environment variables
 ENV NODE_ENV=development
-ENV PORT=3001
-ENV NEXT_PUBLIC_API_URL=http://localhost:3000
+ENV PORT=3000
+ENV API_URL=http://localhost:8100/api
 
 # Expose port
-EXPOSE 3001
+EXPOSE 3000
 
 # Start the application in development mode
 CMD ["npm", "run", "dev"]
@@ -42,11 +42,11 @@ RUN npm run build
 
 # Set environment variables
 ENV NODE_ENV=production
-ENV PORT=3001
-ENV NEXT_PUBLIC_API_URL=http://localhost:5000
+ENV PORT=3000
+ENV API_URL=http://localhost:8100/api
 
 # Expose port
-EXPOSE 3001
+EXPOSE 3000
 
 # Start the application
 CMD ["npm", "start"]

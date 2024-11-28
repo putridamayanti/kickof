@@ -1,21 +1,21 @@
 version: '3'
 services:
   backend:
-    build: ./kickof-express
+    build: ./kickof-go
     ports:
-      - "5000:5000"
-    env_file:
-      - ./kickof-express/.env
-    volumes:
-      - ./kickof-express:/app
-      - /app/node_modules
+      - "8000:8000"
+    environment:
+      - MONGODB_URI=mongodb+srv://admin:TOXrHuQEaQdxELBN@storyrow.cpjety7.mongodb.net/?retryWrites=true&w=majority&appName=storyrow
 
   frontend:
     build: ./kickof-next
     ports:
-      - "3001:3000"
-    env_file:
-      - ./kickof-next/.env
+      - "3100:3000"
+    environment:
+      - API_URL=http://localhost:8000/api
+      - APP_URL=http://localhost:3000
+#    env_file:
+#      - ./kickof-next/.env
     volumes:
       - ./kickof-next:/app
       - /app/node_modules
