@@ -8,6 +8,7 @@ import (
 	"kickof/services"
 	"log"
 	"net/http"
+	"slices"
 	"time"
 )
 
@@ -25,6 +26,22 @@ func GetTasks(c *gin.Context) {
 	if query.UserId != "" {
 		filters["userIds"] = bson.M{
 			"$in": []string{query.UserId},
+		}
+	}
+
+	if query.Assigned == "true" {
+		filters["assigneeIds"] = bson.M{
+			"$exists": true,
+			"$not": bson.M{
+				"$size": 0,
+			},
+		}
+	}
+
+	if query.Completed == "true" {
+		state := services.GetState(bson.M{"name": "Done"}, nil)
+		if state != nil {
+			filters["stateId"] = state.Id
 		}
 	}
 
@@ -62,6 +79,10 @@ func CreateTask(c *gin.Context) {
 			}
 		}
 		request.LabelIds = append(request.LabelIds, val.Id)
+	}
+
+	for _, val := range request.Assignees {
+		request.AssigneeIds = append(request.AssigneeIds, val.Id)
 	}
 
 	_, err = services.CreateTask(request)
@@ -102,6 +123,31 @@ func UpdateTask(c *gin.Context) {
 		return
 	}
 
+	for _, val := range request.Labels {
+		if val.Id == "" {
+			val.Id = uuid.New().String()
+			val.WorkspaceId = request.WorkspaceId
+			val.ProjectId = request.ProjectId
+			val.CreatedAt = time.Now()
+			val.UpdatedAt = time.Now()
+			_, err = services.CreateTaskLabel(val)
+			if err != nil {
+				log.Println("Error create task label", err.Error())
+			}
+		}
+
+		request.LabelIds = append(request.LabelIds, val.Id)
+	}
+
+	for _, val := range request.Assignees {
+		request.AssigneeIds = append(request.AssigneeIds, val.Id)
+	}
+
+	request.UpdatedAt = time.Now()
+	slices.Sort(request.LabelIds)
+	slices.Compact(request.LabelIds)
+	slices.Sort(request.AssigneeIds)
+	slices.Compact(request.AssigneeIds)
 	_, err = services.UpdateTask(id, request)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Response{Data: err.Error()})

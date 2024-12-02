@@ -13,12 +13,25 @@ const login = (params) => {
         });
 };
 
+const register = (params) => {
+    return Api.Instance.post('/register', params)
+        .then(res => {
+            console.log(res?.data)
+            if (res.status === 200) {
+                setItem('x-token', res.data?.data?.token);
+            }
+
+            return res;
+        });
+};
+
 const getProfile = () => {
     return Api.Instance.get('/profile').then(res => res.data);
 };
 
 const AuthService = {
     login,
+    register,
     getProfile
 };
 

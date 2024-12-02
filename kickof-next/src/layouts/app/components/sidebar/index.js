@@ -1,6 +1,17 @@
 'use client'
 
-import {Box, Drawer, IconButton, List, ListItem, styled, Typography, useMediaQuery} from "@mui/material";
+import {
+    Box,
+    Card,
+    CardContent,
+    Drawer, FormLabel,
+    IconButton,
+    List,
+    ListItem, Select,
+    styled,
+    Typography,
+    useMediaQuery
+} from "@mui/material";
 import Logo from "components/shared/Logo";
 import {useDispatch, useSelector} from "store";
 import {CloseRounded} from "@mui/icons-material";
@@ -11,6 +22,8 @@ import SidebarGroup from "layouts/app/components/sidebar/SidebarGroup";
 import SidebarItems from "layouts/app/components/sidebar/SidebarItems";
 import {ThemeActions} from "store/slices/ThemeSlice";
 import Divider from "@mui/material/Divider";
+import MenuItem from "@mui/material/MenuItem";
+import {useParams, useRouter} from "next/navigation";
 
 const MenuHeaderWrapper = styled(Box)(({ theme, width }) => ({
     display: 'flex',
@@ -23,12 +36,14 @@ const MenuHeaderWrapper = styled(Box)(({ theme, width }) => ({
 }))
 export default function Sidebar() {
     const dispatch = useDispatch();
+    const router = useRouter();
+    const params = useParams();
     const themeConfig = useSelector(state => state.theme);
-    const {projects, project} = useSelector(state => state.app);
+    const {project, projects, workspace} = useSelector(state => state.app);
     const smDown = useMediaQuery(theme => theme.breakpoints.down('sm'));
     const { sidebarWidth, isSidebarCollapsed } = useSelector(state => state.theme);
     const variant = isSidebarCollapsed ? 'persistent' : smDown ? 'temporary' : 'permanent';
-    console.log(project)
+
     return (
         <Drawer
             open={!isSidebarCollapsed}
@@ -37,8 +52,6 @@ export default function Sidebar() {
                 width: isSidebarCollapsed ? 0 : sidebarWidth,
                 flexShrink: 0,
                 '& .MuiDrawer-paper': {
-                    // width: drawerWidth,
-                    // boxSizing: 'border-box',
                     border: 'none',
                     boxShadow: 2,
                 },
@@ -53,9 +66,34 @@ export default function Sidebar() {
                     </IconButton>
                 )}
             </MenuHeaderWrapper>
-            <Divider/>
-            <Typography>{project.name}</Typography>
-            <List sx={{ pt: 0, '& > :first-of-type': { mt: '0' } }}>
+            {params?.code && (
+                <>
+                    <Divider/>
+                    <Box sx={{ maxWidth: sidebarWidth, padding: '5px 10px 15px 10px' }}>
+                        <FormLabel sx={{ fontSize: 9 }}>Current Project</FormLabel>
+                        <Select
+                            fullWidth
+                            size="small"
+                            onChange={(e) =>
+                                router.push(`/app/${workspace?.code}/project/${e.target.value}`)}
+                            value={params?.code}
+                            sx={{
+                                // height: 25,
+                                borderRadius: 1,
+                                fontSize: 13,
+                                '& .MuiSelect-select': {
+                                    paddingRight: '0 !important'
+                                }
+                            }}>
+                            {projects.map((e, i) => (
+                                <MenuItem key={i} value={e.code}>{e.name}</MenuItem>
+                            ))}
+                        </Select>
+                    </Box>
+                    <Divider/>
+                </>
+            )}
+            <List sx={{ pt: 3, '& > :first-of-type': { mt: '0' } }}>
                 <SidebarItems
                     themeConfig={themeConfig}
                     items={project?.id ? ProjectMenus : Menus}/>

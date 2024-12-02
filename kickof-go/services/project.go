@@ -29,12 +29,12 @@ func GetProjects(filters bson.M, opt *options.FindOptions) []models.Project {
 		err := cursor.Decode(&data)
 		if err == nil {
 			data.Members = GetProjectMembers(data.UserIds)
-			if data.WorkspaceId != "" {
-				workspace := GetWorkspace(bson.M{"id": data.WorkspaceId}, nil)
-				if workspace != nil {
-					data.Workspace = *workspace
-				}
-			}
+			//if data.WorkspaceId != "" {
+			//	workspace := GetWorkspace(bson.M{"id": data.WorkspaceId}, nil)
+			//	if workspace != nil {
+			//		data.Workspace = *workspace
+			//	}
+			//}
 
 			results = append(results, data)
 		}

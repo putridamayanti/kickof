@@ -33,7 +33,16 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, models.Response{Data: token})
+	user := services.GetUser(bson.M{"email": request.Email}, nil)
+
+	result := models.AuthResult{
+		Token: *token,
+		Id:    user.Id,
+		Name:  user.Name,
+		Email: user.Email,
+	}
+
+	c.JSON(http.StatusOK, models.Response{Data: result})
 	return
 }
 
@@ -52,8 +61,13 @@ func SignIn(c *gin.Context) {
 		return
 	}
 
-	result := map[string]string{
-		"token": *token,
+	user := services.GetUser(bson.M{"email": request.Email}, nil)
+
+	result := models.AuthResult{
+		Token: *token,
+		Id:    user.Id,
+		Name:  user.Name,
+		Email: user.Email,
 	}
 
 	c.JSON(http.StatusOK, models.Response{Data: result})

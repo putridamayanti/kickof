@@ -1,7 +1,6 @@
 import Api from "utils/api";
 
 const getWorkspacesByQuery = (query) => {
-    console.log(query)
     return Api.Instance.get('/workspace', {params: query}).then(res => res.data);
 };
 

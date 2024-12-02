@@ -17,6 +17,8 @@ type Query struct {
 	UserId      string `form:"user"`
 	ProjectId   string `form:"project"`
 	WorkspaceId string `form:"workspace"`
+	Assigned    string `form:"assigned"`
+	Completed   string `form:"completed"`
 }
 
 type Pagination struct {

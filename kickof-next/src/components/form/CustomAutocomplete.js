@@ -6,7 +6,7 @@ import React from "react";
 const filter = createFilterOptions();
 
 export default function CustomAutocomplete(props) {
-    const { label, options, onChange, value, ...rest } = props;
+    const { label, options, onChange, value, disableCreate = false, ...rest } = props;
 
     return (
         <Autocomplete
@@ -25,7 +25,7 @@ export default function CustomAutocomplete(props) {
                 const filtered = filter(options, params);
                 const { inputValue } = params;
                 const isExisting = options.some((option) => inputValue === option.title);
-                if (inputValue !== '' && !isExisting) {
+                if (!disableCreate && inputValue !== '' && !isExisting) {
                     filtered.push({
                         inputValue,
                         label: `Add "${inputValue}"`,

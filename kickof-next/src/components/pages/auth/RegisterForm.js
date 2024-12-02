@@ -15,6 +15,9 @@ import CustomTextField from "components/form/CustomTextField";
 import Link from "next/link";
 import MuiFormControlLabel from "@mui/material/FormControlLabel";
 import {FacebookRounded, GitHub, Google, VisibilityOffRounded, VisibilityRounded, X} from "@mui/icons-material";
+import {useFormik} from "formik";
+import AuthService from "services/AuthService";
+import {useRouter} from "next/navigation";
 
 const LinkStyled = styled(Link)(({ theme }) => ({
     textDecoration: 'none',
@@ -28,25 +31,23 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 }))
 
 export default function RegisterForm() {
-    const [values, setValues] = useState({
-        password: '',
-        showPassword: false
-    })
+    const theme = useTheme();
+    const router = useRouter();
+    const [showPassword, setShowPassword] = useState(false)
 
-    const theme = useTheme()
-    const { settings } = useSettings()
+    const formik = useFormik({
+        initialValues: { name: '', email: '', password: '' },
+        onSubmit: values => handleSubmit(values)
+    });
 
-    const { skin } = settings
-    const hidden = useMediaQuery(theme.breakpoints.down('md'))
-
-    const handleChange = prop => event => {
-        setValues({ ...values, [prop]: event.target.value })
-    }
-
-    const handleClickShowPassword = () => {
-        setValues({ ...values, showPassword: !values.showPassword })
-    }
-    const imageSource = skin === 'bordered' ? 'auth-v2-register-illustration-bordered' : 'auth-v2-register-illustration'
+    const handleSubmit = (values) => {
+        return AuthService.register(values)
+            .then(res => {
+                if (res.status === 200) {
+                    router.push('/app');
+                }
+            })
+    };
 
     return (
         <>
@@ -57,44 +58,56 @@ export default function RegisterForm() {
                 <Typography sx={{ color: 'text.secondary' }}>Make your app management easy and fun!</Typography>
             </Box>
             <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-                <CustomTextField
-                    fullWidth
-                    autoFocus
-                    id='username'
-                    label='Username'
-                    placeholder='John.doe'
-                    sx={{ display: 'flex', mb: 4 }}
-                />
-                <CustomTextField
-                    fullWidth
-                    type='email'
-                    label='Email'
-                    sx={{ display: 'flex', mb: 4 }}
-                    placeholder='john.doe@gmail.com'
-                />
-                <CustomTextField
-                    fullWidth
-                    label='Password'
-                    value={values.password}
-                    placeholder='············'
-                    id='auth-register-v2-password'
-                    onChange={handleChange('password')}
-                    type={values.showPassword ? 'text' : 'password'}
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position='end'>
-                                <IconButton
-                                    edge='end'
-                                    onClick={handleClickShowPassword}
-                                    onMouseDown={e => e.preventDefault()}
-                                    aria-label='toggle password visibility'
-                                >
-                                    {values.showPassword ? <VisibilityRounded/> : <VisibilityOffRounded/>}
-                                </IconButton>
-                            </InputAdornment>
-                        )
-                    }}
-                />
+                <Box sx={{ mb: 4 }}>
+                    <CustomTextField
+                        fullWidth
+                        label='Full Name'
+                        name="name"
+                        value={formik.values.name}
+                        onChange={formik.handleChange}
+                        placeholder='admin@vuexy.com'
+                        error={Boolean(formik.errors.name)}
+                        {...(formik.errors.name && { helperText: formik.errors.name })}
+                    />
+                </Box>
+                <Box sx={{ mb: 4 }}>
+                    <CustomTextField
+                        fullWidth
+                        label='Email'
+                        name="email"
+                        value={formik.values.email}
+                        onChange={formik.handleChange}
+                        placeholder='admin@vuexy.com'
+                        error={Boolean(formik.errors.email)}
+                        type="email"
+                        {...(formik.errors.email && { helperText: formik.errors.email })}
+                    />
+                </Box>
+                <Box sx={{ mb: 1.5 }}>
+                    <CustomTextField
+                        fullWidth
+                        value={formik.values.password}
+                        label='Password'
+                        name="password"
+                        onChange={formik.handleChange}
+                        error={Boolean(formik.errors.password)}
+                        {...(formik.errors.password && { helperText: formik.errors.password })}
+                        type={showPassword ? 'text' : 'password'}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position='end'>
+                                    <IconButton
+                                        edge='end'
+                                        onMouseDown={e => e.preventDefault()}
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        {showPassword ? <VisibilityRounded/> : <VisibilityOffRounded/>}
+                                    </IconButton>
+                                </InputAdornment>
+                            )
+                        }}
+                    />
+                </Box>
                 <FormControlLabel
                     control={<Checkbox />}
                     label={

@@ -13,7 +13,6 @@ import AuthService from "services/AuthService";
 import {ProfileActions} from "store/slices/ProfileSlice";
 
 const LayoutWrapper = styled(Box)(({ theme }) => ({
-    // height: '100%',
     display: 'flex',
     backgroundColor: theme.palette.background.default
 }));
@@ -59,6 +58,14 @@ export default function AppLayout(props) {
         (!project?.id && params.code) ? '/api/project' : null,
         () => ProjectService.getProjectByCode(params.code));
 
+    const { data: resDataProjects, isLoading: loadingProjects } = useSWR(
+        (params?.workspace && workspace?.id) ? '/api/project' : null,
+        () => ProjectService.getProjectsByQuery({workspace: workspace?.id}), {
+            onSuccess: (res) => {
+                dispatch(AppActions.setProjects(res?.data?.data));
+            }
+        });
+
     useEffect(() => {
         if (resData?.data?.data?.length > 0) {
             dispatch(AppActions.setWorkspace(resData?.data?.data[0]));
@@ -77,6 +84,10 @@ export default function AppLayout(props) {
     useEffect(() => {
         if (workspace?.code && params.workspace !== workspace.code) {
             router.push(`/app/${workspace.code}`);
+        }
+
+        if (project?.id && !params.code) {
+            dispatch(AppActions.setProject({}));
         }
     }, [workspace, params, router]);
 

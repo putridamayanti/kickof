@@ -24,29 +24,28 @@ export default function TaskForm(props) {
 
     const formik = useFormik({
         initialValues: {
+            id: data?.id ?? null,
             title: data?.title ?? '',
             description: data?.description ?? '',
             stateId: data?.stateId ?? '',
             labels: data?.labels ?? [],
+            assignees: data?.assignees?.map((e) => ({...e, label: e.name})) ?? [],
         },
+        enableReinitialize: true,
         onSubmit: values => onSubmit(values)
     });
 
-    const mounted = useRef(false);
-    useEffect(() => {
-        if (!mounted.current && data) {
-            formik.setValues(data);
-
-            mounted.current = true;
-        }
-    }, [data, formik]);
-
     const dataMembers = useMemo(() => {
         return members?.map((e) => ({
-            ...members,
+            ...e,
             label: e.name
         }))
     }, [members]);
+
+    const handleClose = () => {
+        formik.handleReset();
+        onClose();
+    };
 
     const handleDelete = () => {
         return TaskService.deleteTask(data?.id)
@@ -56,14 +55,14 @@ export default function TaskForm(props) {
                 onRefresh();
             })
     };
-    console.log(formik.values.assignees, formik.values.labels)
+
     return (
         <>
             <Dialog
                 fullWidth
                 maxWidth="md"
                 open={open}
-                onClose={onClose}>
+                onClose={handleClose}>
                 <DialogTitle>Add New Task</DialogTitle>
                 <form onSubmit={formik.handleSubmit}>
                     <DialogContent>
@@ -93,7 +92,7 @@ export default function TaskForm(props) {
                                 select
                                 label="State"
                                 name="stateId"
-                                value={formik.values.columnId}
+                                value={formik.values.stateId}
                                 onChange={formik.handleChange}
                                 error={Boolean(formik.errors.stateId)}
                                 {...(formik.errors.stateId && {helperText: formik.errors.stateId})}
@@ -108,12 +107,13 @@ export default function TaskForm(props) {
                                 label="Labels"
                                 options={taskLabels ?? []}
                                 onChange={(newValue) => formik.setFieldValue('labels', newValue)}
-                                value={formik.values.labels}/>
+                                value={formik.values.labels ?? []}/>
                             <CustomAutocomplete
+                                disableCreate
                                 label="Assignees"
                                 options={dataMembers ?? []}
                                 onChange={(newValue) => formik.setFieldValue('assignees', newValue)}
-                                value={formik.values.assignees}/>
+                                value={formik.values.assignees ?? []}/>
                         </Stack>
                     </DialogContent>
                     <DialogActions>
@@ -128,7 +128,7 @@ export default function TaskForm(props) {
                                 </Button>
                             </Stack>
                         )}
-                        <Button color="default" onClick={onClose} type="button">
+                        <Button color="default" onClick={handleClose} type="button">
                             Cancel
                         </Button>
                         <Button variant="contained" type="submit">

@@ -43,7 +43,7 @@ export default function LoginForm() {
         <>
             <Box sx={{ my: 6 }}>
                 <Typography variant='h3' sx={{ mb: 1.5 }}>
-                    {`Welcome to Storyrow! 👋🏻`}
+                    {`Welcome to KickOf! 👋🏻`}
                 </Typography>
                 <Typography sx={{ color: 'text.secondary' }}>
                     Please sign-in to your account and start the adventure
@@ -67,6 +67,7 @@ export default function LoginForm() {
                         onChange={formik.handleChange}
                         placeholder='admin@vuexy.com'
                         error={Boolean(formik.errors.email)}
+                        type="email"
                         {...(formik.errors.email && { helperText: formik.errors.email })}
                     />
                 </Box>

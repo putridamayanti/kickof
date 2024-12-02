@@ -18,6 +18,7 @@ import TaskForm from "components/pages/task/TaskForm";
 import TaskService from "services/TaskService";
 import Divider from "@mui/material/Divider";
 import CustomChip from "components/chip/CustomChip";
+import TaskCard from "components/pages/task/TaskCard";
 
 const KanbanWrapper = styled(Box)(({ theme }) => ({
     paddingBottom: '0.95rem',
@@ -46,11 +47,11 @@ export default function KanbanView(props) {
 
     const mounted = useRef(false);
     useEffect(() => {
-        if (!mounted.current && columns.length === 0 && states?.length > 0) {
+        if (!mounted.current && columns?.length === 0 && states?.length > 0) {
             setColumns(states);
             mounted.current = true;
         }
-    }, [states, columns.length]);
+    }, [states, columns?.length]);
 
     const onDragEnd = async (result) => {
         const { source, destination, draggableId } = result;
@@ -73,6 +74,26 @@ export default function KanbanView(props) {
             if (res.status === 200) {
                 refresh();
             }
+        }
+    };
+
+    const addNewTask = (task) => {
+        const stateIndex = columns.findIndex(e => e.id === task?.stateId);
+        columns[stateIndex].tasks = [task, ...columns[stateIndex].tasks];
+    };
+
+    const updateTaskList = (task) => {
+        const currentTaskState = columns.find(e => e.tasks.find(item => item.id === task.id))
+        const currentTaskStateIndex = columns.findIndex(e => e.tasks.find(item => item.id === task.id))
+        const stateIndex = columns.findIndex(e => e.id === task?.stateId);
+
+        if (currentTaskStateIndex === stateIndex) {
+            const taskIndex = columns[stateIndex].tasks?.findIndex(e => e.id === task.id);
+            columns[stateIndex].tasks[taskIndex] = {...task};
+        }
+        if (currentTaskState?.id !== task.stateId) {
+            columns[stateIndex].tasks = [task, ...columns[stateIndex].tasks];
+            columns[currentTaskStateIndex].tasks = columns[currentTaskStateIndex].tasks?.filter(e => e.id !== task.id);
         }
     };
 
@@ -111,8 +132,12 @@ export default function KanbanView(props) {
         })
 
         return submit(values).then((res) => {
-            console.log(res)
-            setNewForm(false);
+            if (values?.id) {
+                updateTaskList(values);
+            } else {
+                addNewTask(res?.data?.data);
+            }
+            setTaskForm({open: false, data: null});
             refresh();
         });
     };
@@ -121,7 +146,7 @@ export default function KanbanView(props) {
         <>
             <Stack direction="row" justifyContent="space-between" alignItems="center" marginBottom={5}>
                 <Typography variant="h4" gutterBottom sx={{ flex: 1 }}>
-                    Kanban Board
+                    All Tasks
                 </Typography>
                 <Stack direction="row" spacing={2}>
                     <Button variant="contained" onClick={() => setTaskForm({open: true, data: null})}>
@@ -147,47 +172,18 @@ export default function KanbanView(props) {
                                             {column?.tasks?.map((task, index) => (
                                                 <Draggable key={task.id} draggableId={task.id} index={index}>
                                                     {(provided) => (
-                                                        <Card
+                                                        <Box
+                                                            sx={{ maxWidth: '100%' }}
                                                             ref={provided.innerRef}
                                                             {...provided.draggableProps}
-                                                            {...provided.dragHandleProps}
-                                                            elevation={0}
-                                                            sx={{ p: 2, mb: 2, border: `1px solid ${theme.palette.grey.A200}` }}
-                                                            onClick={() => setTaskForm({open: true, data: task})}
-                                                        >
-                                                            <Typography>{task.title}</Typography>
-                                                            <Stack direction="row" spacing={1} alignItems="center" sx={{ marginTop: 2 }}>
-                                                                <AvatarGroup
-                                                                    max={4}
-                                                                    sx={{
-                                                                        '& :first-child.MuiAvatar-root': {
-                                                                            width: 20,
-                                                                            height: 20,
-                                                                            fontSize: 11,
-                                                                            backgroundColor: 'secondary.main',
-                                                                            color: 'secondary.contrastText'
-                                                                        }
-                                                                    }}>
-                                                                    {task.assignees?.map((e, i) => (
-                                                                        <Avatar key={i} alt={e.name}/>
-                                                                    ))}
-                                                                </AvatarGroup>
-                                                                {task.labels?.map((e, i) => (
-                                                                    <CustomChip
-                                                                        key={i}
-                                                                        color={e.color !== '' ? e.color : theme.palette.primary.main}
-                                                                        label={e.label}
-                                                                        size="small"
-                                                                        sx={{
-                                                                            height: 18,
-                                                                            '.MuiChip-label': {
-                                                                                fontSize: 10,
-                                                                                fontWeight: 500
-                                                                            }
-                                                                        }}/>
-                                                                ))}
-                                                            </Stack>
-                                                        </Card>
+                                                            {...provided.dragHandleProps}>
+                                                            <TaskCard
+                                                                elevation={0}
+                                                                sx={{ p: 2, mb: 2, border: `1px solid ${theme.palette.grey.A200}` }}
+                                                                task={task}
+                                                                onClick={() => setTaskForm({open: true, data: task})}
+                                                            />
+                                                        </Box>
                                                     )}
                                                 </Draggable>
                                             ))}

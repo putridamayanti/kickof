@@ -19,7 +19,6 @@ export const AppSlice = createSlice({
             state.workspace = action.payload;
         },
         setWorkspaces: (state, action) => {
-            console.log(action.payload)
             state.workspaces = action.payload;
         },
         setProject: (state, action) => {

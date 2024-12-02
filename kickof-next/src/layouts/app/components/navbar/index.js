@@ -9,7 +9,7 @@ import {AppActions} from "store/slices/AppSlice";
 import {useParams, useRouter} from "next/navigation";
 import {useEffect} from "react";
 import AppNavbarWorkspaceSelect from "layouts/app/components/navbar/AppNavbarWorkspaceSelect";
-import {ArrowRightRounded, ChevronRightRounded} from "@mui/icons-material";
+import {ArrowRightRounded, ChevronRightRounded, HomeOutlined} from "@mui/icons-material";
 import AppNavbarProjectSelect from "layouts/app/components/navbar/AppNavbarProjectSelect";
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
@@ -117,7 +117,11 @@ export default function AppNavbar(props) {
                             </defs>
                         </svg>
                     </IconButton>
-                    <Box width={20}/>
+                    <Stack alignItems="center" justifyContent="center" sx={{ marginRight: 2 }}>
+                        <IconButton onClick={() => router.push(`/app/${params.workspace}`)}>
+                            <HomeOutlined/>
+                        </IconButton>
+                    </Stack>
                     <AppNavbarWorkspaceSelect
                         workspaces={workspaces}
                         selected={workspace}

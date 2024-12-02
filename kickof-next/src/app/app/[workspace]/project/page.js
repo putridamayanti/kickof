@@ -2,7 +2,7 @@
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid2";
-import {Button, Card, CardContent, Stack, Typography} from "@mui/material";
+import {Button, Card, CardContent, CircularProgress, Stack, Typography} from "@mui/material";
 import Image from "next/image";
 import {useParams, useRouter} from "next/navigation";
 import React from "react";
@@ -35,6 +35,11 @@ export default function Project() {
                     Add Project
                 </Button>
             </Stack>
+            {loading && (
+                <Stack alignItems="center">
+                    <CircularProgress/>
+                </Stack>
+            )}
             <Grid container spacing={4}>
                 {resData?.data?.data?.map((e, i) => (
                     <Grid key={i} size={{ xs: 12, lg: 4 }} sx={{ cursor: 'pointer' }}>
