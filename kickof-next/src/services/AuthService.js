@@ -4,7 +4,6 @@ import {setItem} from "utils/storage";
 const login = (params) => {
     return Api.Instance.post('/login', params)
         .then(res => {
-            console.log(res?.data)
             if (res.status === 200) {
                 setItem('x-token', res.data?.data?.token);
             }

@@ -81,7 +81,13 @@ export default function Home() {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {resAssigned?.data?.data?.map((e, i) => (
+                                    {resAssigned?.data?.data?.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell colSpan={2}>
+                                                No Task
+                                            </TableCell>
+                                        </TableRow>
+                                        ) : resAssigned?.data?.data?.map((e, i) => (
                                         <TableRow key={i}>
                                             <TableCell>{e.title}</TableCell>
                                             <TableCell>
@@ -121,7 +127,13 @@ export default function Home() {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {resCompleted?.data?.data?.map((e, i) => (
+                                    {resCompleted?.data?.data?.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell colSpan={2}>
+                                                No Task
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : resCompleted?.data?.data?.map((e, i) => (
                                         <TableRow key={i}>
                                             <TableCell>{e.title}</TableCell>
                                             <TableCell>

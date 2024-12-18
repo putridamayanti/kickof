@@ -5,25 +5,31 @@ import {WorkspaceSizes} from "constants/constants";
 import MenuItem from "@mui/material/MenuItem";
 import WorkspaceService from "services/WorkspaceService";
 import {useRouter} from "next/navigation";
+import {useDispatch} from "store";
+import {AppActions} from "store/slices/AppSlice";
 
 export default function WorkspaceForm(props) {
     const { redirectUrl } = props
+    const dispatch = useDispatch();
     const router = useRouter();
     const formik = useFormik({
         initialValues: {
-            name: 'Workspace 1',
-            code: 'workspace1',
-            endpoint: 'workspace1',
-            size: '2-20',
+            name: '',
+            code: '',
+            endpoint: '',
+            size: '',
         },
         onSubmit: values => handleSubmit(values)
     });
 
     const handleSubmit = values => {
         const finalUrl = redirectUrl.replace('{workspace}', values.code);
-        console.log(finalUrl)
+
         return WorkspaceService.createWorkspace(values)
-            .then(res => redirectUrl?.includes('{workspace}') ? router.push(finalUrl) : router.back());
+            .then(res => {
+                dispatch(AppActions.setWorkspace(res?.data));
+                return redirectUrl?.includes('{workspace}') ? router.push(finalUrl) : router.back()
+            });
     }
 
     return (

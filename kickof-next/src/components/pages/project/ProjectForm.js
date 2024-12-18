@@ -13,9 +13,9 @@ export default function ProjectForm({ data }) {
 
     const formik = useFormik({
         initialValues: {
-            name: 'Project 2',
-            code: 'project2',
-            description: 'Development stage',
+            name: '',
+            code: '',
+            description: '',
         },
         onSubmit: values => handleSubmit(values)
     });

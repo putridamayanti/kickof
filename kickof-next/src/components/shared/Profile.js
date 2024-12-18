@@ -3,6 +3,7 @@ import {Avatar, Badge, Box, Divider, IconButton, Menu, MenuItem, styled, Typogra
 import {useSelector} from "store";
 import {useRouter} from "next/navigation";
 import {LogoutRounded, PersonRounded, SettingsRounded} from "@mui/icons-material";
+import {removeItem} from "utils/storage";
 
 const MenuItemStyled = styled(MenuItem)(({ theme }) => ({
     '&:hover .MuiBox-root, &:hover .MuiBox-root svg': {
@@ -27,9 +28,6 @@ export default function Profile() {
     const router = useRouter();
     const { email, name, role } = useSelector(state => state.profile);
     const [anchorEl, setAnchorEl] = useState(null)
-    const handleDropdownOpen = event => {
-        setAnchorEl(event.currentTarget)
-    }
 
     const handleDropdownClose = url => {
         if (url) {
@@ -53,9 +51,10 @@ export default function Profile() {
         }
     }
 
-    const handleLogout = () => {
-        // logout()
-        handleDropdownClose()
+    const handleLogout = async () => {
+        await removeItem('x-token');
+        handleDropdownClose();
+        router.push('/');
     }
 
     return (

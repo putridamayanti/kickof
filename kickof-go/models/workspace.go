@@ -6,7 +6,7 @@ type Workspace struct {
 	Code      string   `json:"code"`
 	Endpoint  string   `json:"endpoint"`
 	Size      string   `json:"size"`
-	UserIds   []string `json:"userIds"`
+	UserIds   []string `json:"userIds" bson:"userIds"`
 	Members   []User   `json:"members" bson:"-"`
 	BasicDate `bson:",inline"`
 }

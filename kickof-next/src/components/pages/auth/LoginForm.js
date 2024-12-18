@@ -24,18 +24,24 @@ export default function LoginForm() {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false)
     const [rememberMe, setRememberMe] = useState(true)
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const formik = useFormik({
-        initialValues: { email: 'admin@kickof.com', password: 'admin' },
+        initialValues: { email: '', password: '' },
         onSubmit: values => handleSubmit(values)
     });
 
     const handleSubmit = (values) => {
+        // setLoading(true);
         return AuthService.login(values)
             .then(res => {
+                setLoading(false);
                 if (res.status === 200) {
                     router.push('/app');
                 }
+            }).catch(err => {
+                setError(err.response.data?.data ?? 'Something Wrong!');
             })
     };
 
@@ -49,14 +55,13 @@ export default function LoginForm() {
                     Please sign-in to your account and start the adventure
                 </Typography>
             </Box>
-            <Alert icon={false} color="primary" sx={{ py: 3, mb: 6, '& .MuiAlert-message': { p: 0 } }}>
-                <Typography variant='body2' sx={{ mb: 2, color: 'primary.main' }}>
-                    Admin: <strong>admin@kickof.com</strong> / Pass: <strong>admin</strong>
-                </Typography>
-                <Typography variant='body2' sx={{ color: 'primary.main' }}>
-                    Client: <strong>client@vuexy.com</strong> / Pass: <strong>client</strong>
-                </Typography>
-            </Alert>
+            {error && (
+                <Alert icon={false} color="error" sx={{ py: 3, mb: 6, '& .MuiAlert-message': { p: 0 } }}>
+                    <Typography variant='body2' sx={{ color: 'error.main' }}>
+                        {error}
+                    </Typography>
+                </Alert>
+            )}
             <form noValidate autoComplete='off' onSubmit={formik.handleSubmit}>
                 <Box sx={{ mb: 4 }}>
                     <CustomTextField
@@ -65,7 +70,6 @@ export default function LoginForm() {
                         name="email"
                         value={formik.values.email}
                         onChange={formik.handleChange}
-                        placeholder='admin@vuexy.com'
                         error={Boolean(formik.errors.email)}
                         type="email"
                         {...(formik.errors.email && { helperText: formik.errors.email })}
@@ -113,7 +117,7 @@ export default function LoginForm() {
                         Forgot Password?
                     </Typography>
                 </Box>
-                <Button fullWidth type='submit' variant='contained' sx={{ mb: 4 }}>
+                <Button fullWidth disabled={loading} type='submit' variant='contained' sx={{ mb: 4 }}>
                     Login
                 </Button>
                 <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>

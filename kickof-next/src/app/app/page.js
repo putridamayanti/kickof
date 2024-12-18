@@ -1,6 +1,6 @@
 'use client'
 
-import {Stack, Typography} from "@mui/material";
+import {CircularProgress, Stack, Typography} from "@mui/material";
 import useSWR from "swr";
 import WorkspaceService from "services/WorkspaceService";
 import WorkspaceForm from "components/pages/workspace/WorkspaceForm";
@@ -25,7 +25,7 @@ export default function Dashboard() {
                     </Box>
                 </Stack>
             ) : (
-                <Typography>Dashboard</Typography>
+                <CircularProgress/>
             )}
         </>
     )

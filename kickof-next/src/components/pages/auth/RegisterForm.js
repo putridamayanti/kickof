@@ -34,6 +34,7 @@ export default function RegisterForm() {
     const theme = useTheme();
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false)
+    const [loading, setLoading] = useState(false);
 
     const formik = useFormik({
         initialValues: { name: '', email: '', password: '' },
@@ -41,8 +42,10 @@ export default function RegisterForm() {
     });
 
     const handleSubmit = (values) => {
+        setLoading(true)
         return AuthService.register(values)
             .then(res => {
+                setLoading(false)
                 if (res.status === 200) {
                     router.push('/app');
                 }
@@ -57,7 +60,7 @@ export default function RegisterForm() {
                 </Typography>
                 <Typography sx={{ color: 'text.secondary' }}>Make your app management easy and fun!</Typography>
             </Box>
-            <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
+            <form noValidate autoComplete='off' onSubmit={formik.handleSubmit}>
                 <Box sx={{ mb: 4 }}>
                     <CustomTextField
                         fullWidth
@@ -65,7 +68,6 @@ export default function RegisterForm() {
                         name="name"
                         value={formik.values.name}
                         onChange={formik.handleChange}
-                        placeholder='admin@vuexy.com'
                         error={Boolean(formik.errors.name)}
                         {...(formik.errors.name && { helperText: formik.errors.name })}
                     />
@@ -77,7 +79,6 @@ export default function RegisterForm() {
                         name="email"
                         value={formik.values.email}
                         onChange={formik.handleChange}
-                        placeholder='admin@vuexy.com'
                         error={Boolean(formik.errors.email)}
                         type="email"
                         {...(formik.errors.email && { helperText: formik.errors.email })}
@@ -119,7 +120,7 @@ export default function RegisterForm() {
                         </Box>
                     }
                 />
-                <Button fullWidth type='submit' variant='contained' sx={{ mb: 4 }}>
+                <Button fullWidth disabled={loading} type='submit' variant='contained' sx={{ mb: 4 }}>
                     Sign up
                 </Button>
                 <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>

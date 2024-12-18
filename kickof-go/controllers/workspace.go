@@ -36,8 +36,9 @@ func GetWorkspaces(c *gin.Context) {
 }
 
 func CreateWorkspace(c *gin.Context) {
-	var request models.Workspace
+	profile := services.GetCurrentUser(c.Request)
 
+	var request models.Workspace
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
 		c.JSON(400, models.Response{Data: err.Error()})
@@ -47,6 +48,7 @@ func CreateWorkspace(c *gin.Context) {
 	request.Id = uuid.New().String()
 	request.CreatedAt = time.Now()
 	request.UpdatedAt = time.Now()
+	request.UserIds = []string{profile.Id}
 
 	_, err = services.CreateWorkspace(request)
 	if err != nil {

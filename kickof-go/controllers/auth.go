@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"kickof/models"
 	"kickof/services"
+	"kickof/utils"
 	"net/http"
 	"os"
 	"time"
@@ -23,7 +24,7 @@ func SignUp(c *gin.Context) {
 	params := models.Register{
 		Name:     request.Name,
 		Email:    request.Email,
-		Password: request.Password,
+		Password: utils.HashAndSalt(request.Password),
 	}
 
 	url := os.Getenv("FRONTEND_URL") + "/activate/"
